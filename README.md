@@ -1,2 +1,2 @@
 # beePU
-bit-efficient emulated processing unit
+**B**ecause **E**mulating **E**verything is **P**ure **U**nderstanding
