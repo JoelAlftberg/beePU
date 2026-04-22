@@ -1,0 +1,7 @@
+.org 0x0000
+LLI r1, 0x37
+LUI r1, 0x13
+LLI r3, 0x10
+LUI r3, 0x10
+STA r3, r1
+LDA r1, r12
