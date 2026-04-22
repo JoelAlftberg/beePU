@@ -13,3 +13,4 @@ Assembler for the bIS instruction set.
 `-f <format>` used to specify the output format
 
 `-o <output>` used to specify the output file
+

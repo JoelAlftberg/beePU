@@ -3,6 +3,11 @@
 The Instruction set for the beeCPU is called bIS which stands for *beePU Instruction Set*  
 The instructions are two bytes long, the layout of the opcodes are explained in detail below.
 
+## Assembly syntax
+The source code must start with `.org` and the origin address of the program.  
+Labels must be on their own lines and must end with `:`  
+Comments start with `;`  
+
 ## Field layout
 
 ### Format selector bits  
@@ -82,7 +87,7 @@ The LDA instruction loads the value at the *address* which the source register h
 ## LLI
 `01 0001 xx xxxxxxxx`  
 
-The LDI instruction loads an 8-bit value immediately to a the lower 8-bits of a register.  
+The LLI instruction loads an 8-bit value immediately to a the lower 8-bits of a register.  
 Only works for the R0-R3 registers, use MOV to move the value after loading it.
 
 * `[9:8]` -  Destination register 
@@ -91,7 +96,7 @@ Only works for the R0-R3 registers, use MOV to move the value after loading it.
 ## LUI
 `01 0000 xx xxxxxxxx`  
 
-The LDI instruction loads an 8-bit value immediately to a the upper 8-bits of a register.  
+The LUI instruction loads an 8-bit value immediately to a the upper 8-bits of a register.  
 Only works for the R0-R3 registers, use MOV to move the value after loading it.
 
 * `[9:8]` -  Destination register 

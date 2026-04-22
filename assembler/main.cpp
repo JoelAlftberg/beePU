@@ -5,7 +5,7 @@
 
 #include "assembler.h"
 
-int main(int argc, char* argv[], char* env[])
+int main(int argc, char* argv[])
 {
 
 	const char* output = nullptr;
@@ -54,9 +54,11 @@ int main(int argc, char* argv[], char* env[])
 	std::ifstream source_file(input);
 	std::string line;
 
+	Assembler assembler{};
+
 	while (std::getline(source_file, line))
 	{
-		//TODO: let the assembler parse the line 
+		assembler.firstPass(line);
 	}
 
 	return 0;
