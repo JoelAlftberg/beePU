@@ -1,4 +1,11 @@
 # beePU
-**B**ecause **E**mulating **E**verything is **P**ure **U**nderstanding
+A 16-bit emulated CPU implementing a custom instruction set (bIS), with an accompanying assembler (basm) for compiling bIS assembly into binary.
 
-A 16-bit CPU emulator implementing a custom ISA called bIS (bee Instruction Set). 
+Features
+* 16 registers
+* 64kB RAM
+* custom instruction set with 64 instructions
+
+Specification
+* little-endian
+

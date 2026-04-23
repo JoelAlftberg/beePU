@@ -52,6 +52,7 @@ private:
 	void executeBNE(const Instruction& instruction);
 	void executeHLT(const Instruction& instruction);
 	void executeJMP(const Instruction& instruction);
+	void executeJMPI(const Instruction& instruction);
 	void executeLDA(const Instruction& instruction);
 	void executeLLI(const Instruction& instruction);
 	void executeLUI(const Instruction& instruction);

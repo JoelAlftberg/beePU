@@ -1,0 +1,11 @@
+.org 0x0000
+LLI r1, 0x37 ; hejtest
+LUI r1, 0x13
+LLI r3, 0x10
+NOP
+NOP
+NOP
+LUI r3, 0x10 ; lägger in 16 i R3
+STA r3, r1
+LDA r1, r12
+HLT

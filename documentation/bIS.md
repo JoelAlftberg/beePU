@@ -3,6 +3,11 @@
 The Instruction set for the beeCPU is called bIS which stands for *beePU Instruction Set*  
 The instructions are two bytes long, the layout of the opcodes are explained in detail below.
 
+## Assembly syntax
+The source code must start with `.org` and the origin address of the program.  
+Labels must be on their own lines and must end with `:`  
+Comments start with `;`  
+
 ## Field layout
 
 ### Format selector bits  
@@ -13,6 +18,11 @@ The first two bits of the opcode `[15,14]` is used to select which format the in
 * `11` - Single-register operations
 
 # Instructions
+
+Next free TWO_REG : 	`1000`/`0x08`  
+Next free IMMEDIATE : 	`0010`/`0x12`  
+Next free JUMP : 		`0110`/`0x25`  
+Next free SINGLE_REG : 	`0100`/`0x34`  
 
 ## ADD
 `00 0000 -- xxxx xxxx`  
@@ -66,11 +76,16 @@ The HLT instruction halts the operation of the CPU permanently.
 * Bits `[7:0]` are ignored in this opcode.
 
 ## JMP
-`10 0000 -- xxxx ----`  
+`11 0011 -- xxxx ----`  
 
 The JMP instruction jumps (sets the PC) to the address stored in the target register  
 * `[7:4]` - Target register
 * Bits `[3:0]` are ignored in this opcode.
+
+## JMPI
+`10 0000 xxxxxxxxxx`  
+The JMPI instruction jumps (sets the PC) based on the offset specified.  
+* `[9:0]` - Signed offset in bytes to jump
 
 ## LDA
 `00 0010 -- xxxx xxxx`  
@@ -82,7 +97,7 @@ The LDA instruction loads the value at the *address* which the source register h
 ## LLI
 `01 0001 xx xxxxxxxx`  
 
-The LDI instruction loads an 8-bit value immediately to a the lower 8-bits of a register.  
+The LLI instruction loads an 8-bit value immediately to a the lower 8-bits of a register.  
 Only works for the R0-R3 registers, use MOV to move the value after loading it.
 
 * `[9:8]` -  Destination register 
@@ -91,7 +106,7 @@ Only works for the R0-R3 registers, use MOV to move the value after loading it.
 ## LUI
 `01 0000 xx xxxxxxxx`  
 
-The LDI instruction loads an 8-bit value immediately to a the upper 8-bits of a register.  
+The LUI instruction loads an 8-bit value immediately to a the upper 8-bits of a register.  
 Only works for the R0-R3 registers, use MOV to move the value after loading it.
 
 * `[9:8]` -  Destination register 

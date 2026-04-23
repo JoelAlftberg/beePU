@@ -98,7 +98,8 @@ CPU::CPU()
 	opcode_table_[0x24] = &CPU::executeBLT;
 	opcode_table_[0x22] = &CPU::executeBNE;
 	opcode_table_[0x30] = &CPU::executeHLT;
-	opcode_table_[0x20] = &CPU::executeJMP;
+	opcode_table_[0x33] = &CPU::executeJMP;
+	opcode_table_[0x20] = &CPU::executeJMPI;
 	opcode_table_[0x02] = &CPU::executeLDA;
 	opcode_table_[0x11] = &CPU::executeLLI;
 	opcode_table_[0x10] = &CPU::executeLUI;

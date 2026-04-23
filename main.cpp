@@ -1,18 +1,20 @@
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <vector>
 
 #include "cpu/cpu.h"
 #include "memory/ram.h"
 
-int main()
+int main(int argc, char* argv[])
 {
 	cpu::CPU cpu{};
 	
 
 	std::vector<uint16_t> program = {
 		0b0100010101001000,		// LLI 01 0001, r1, immediate 72
-		0b0000010000010110,		// MOV 00 0000, r1, r2
-		0b0000000000010110,		// ADD 00 0001, r1, r2
+		0b0000010000010110,		// MOV 00 0000, r1, r6
+		0b0000000000010110,		// ADD 00 0001, r1, r6
 		0b1100000000000000,		// HLT 11 0000
 	};
 
