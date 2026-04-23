@@ -26,7 +26,10 @@ public:
 	bool halted() const { return halted_; }
 
 	std::uint16_t fetch();
+	std::uint16_t getProgramCounter();
+
 	Instruction decode(std::uint16_t instruction_bits);
+
 	void execute(Instruction instruction);
 	void step();
 

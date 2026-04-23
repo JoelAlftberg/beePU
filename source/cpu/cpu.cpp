@@ -10,6 +10,29 @@
 namespace cpu
 {
 
+CPU::CPU()
+{
+	opcode_table_[0x00] = &CPU::executeADD;
+	opcode_table_[0x04] = &CPU::executeAND;
+	opcode_table_[0x21] = &CPU::executeBEQ;
+	opcode_table_[0x23] = &CPU::executeBGT;
+	opcode_table_[0x24] = &CPU::executeBLT;
+	opcode_table_[0x22] = &CPU::executeBNE;
+	opcode_table_[0x30] = &CPU::executeHLT;
+	opcode_table_[0x33] = &CPU::executeJMP;
+	opcode_table_[0x20] = &CPU::executeJMPI;
+	opcode_table_[0x02] = &CPU::executeLDA;
+	opcode_table_[0x11] = &CPU::executeLLI;
+	opcode_table_[0x10] = &CPU::executeLUI;
+	opcode_table_[0x01] = &CPU::executeMOV;
+	opcode_table_[0x31] = &CPU::executeNOP;
+	opcode_table_[0x32] = &CPU::executeNOT;
+	opcode_table_[0x03] = &CPU::executeOR;
+	opcode_table_[0x05] = &CPU::executeSTA;
+	opcode_table_[0x06] = &CPU::executeSUB;
+	opcode_table_[0x07] = &CPU::executeXOR;
+}
+
 void CPU::printState()
 {
 	for(uint8_t i = 0; i < REG_AMOUNT; ++i)
@@ -24,6 +47,11 @@ void CPU::loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr)
 	{
 		ram_.writeWord(program[i], start_addr + i * 2);
 	}
+}
+
+std::uint16_t CPU::getProgramCounter()
+{
+	return pc_.read();
 }
 
 std::uint16_t CPU::fetch()
@@ -87,29 +115,6 @@ void CPU::step()
 	std::uint16_t instruction_bits = fetch();
 	Instruction instruction = decode(instruction_bits);
 	execute(instruction);
-}
-
-CPU::CPU()
-{
-	opcode_table_[0x00] = &CPU::executeADD;
-	opcode_table_[0x04] = &CPU::executeAND;
-	opcode_table_[0x21] = &CPU::executeBEQ;
-	opcode_table_[0x23] = &CPU::executeBGT;
-	opcode_table_[0x24] = &CPU::executeBLT;
-	opcode_table_[0x22] = &CPU::executeBNE;
-	opcode_table_[0x30] = &CPU::executeHLT;
-	opcode_table_[0x33] = &CPU::executeJMP;
-	opcode_table_[0x20] = &CPU::executeJMPI;
-	opcode_table_[0x02] = &CPU::executeLDA;
-	opcode_table_[0x11] = &CPU::executeLLI;
-	opcode_table_[0x10] = &CPU::executeLUI;
-	opcode_table_[0x01] = &CPU::executeMOV;
-	opcode_table_[0x31] = &CPU::executeNOP;
-	opcode_table_[0x32] = &CPU::executeNOT;
-	opcode_table_[0x03] = &CPU::executeOR;
-	opcode_table_[0x05] = &CPU::executeSTA;
-	opcode_table_[0x06] = &CPU::executeSUB;
-	opcode_table_[0x07] = &CPU::executeXOR;
 }
 
 } // namespace cpu

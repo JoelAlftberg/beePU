@@ -3,12 +3,15 @@
 #include <iostream>
 #include <vector>
 
+#include "cli/cli.h"
 #include "cpu/cpu.h"
 #include "memory/ram.h"
 
 int main(int argc, char* argv[])
 {
+	
 	cpu::CPU cpu{};
+	cli::CLI cli{cpu};
 
 	const char* inputBinary = argv[1];
 
@@ -36,13 +39,12 @@ int main(int argc, char* argv[])
 
 	cpu.loadProgram(program, 0);
 
-	while(!cpu.halted())
-	{
-		std::cin.get();
-		cpu.step();
-		if (cpu.halted()){ return 0;}
-		cpu.printState();
 
+	while(1)
+	{
+		cli::Input input{cli.readInput()};
+		cli::Output output{cli.evaluateInput(input)};
+		cli.printOutput(output);
 	}
 
 }

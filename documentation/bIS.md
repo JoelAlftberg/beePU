@@ -19,11 +19,6 @@ The first two bits of the opcode `[15,14]` is used to select which format the in
 
 # Instructions
 
-Next free TWO_REG : 	`1000`/`0x08`  
-Next free IMMEDIATE : 	`0010`/`0x12`  
-Next free JUMP : 		`0110`/`0x25`  
-Next free SINGLE_REG : 	`0100`/`0x34`  
-
 ## ADD
 `00 0000 -- xxxx xxxx`  
 

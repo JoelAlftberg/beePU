@@ -4,7 +4,7 @@ Assembler for the bIS instruction set.
 
 ## Building
 
-Requires a version of g++ that is compatible with the c++23 standard.  
+Requires GCC 13 or later (C++23)  
 
 ```bash
 make
