@@ -80,6 +80,12 @@ void CPU::executeJMP(const Instruction& instruction)
 	pc_.write(address);
 }
 
+void CPU::executeJMPI(const Instruction& instruction)
+{
+	std::int16_t offset = (instruction.immediate & 0x200) ? instruction.immediate | 0xFC00 : instruction.immediate;
+	pc_.branch(offset);	
+}
+
 void CPU::executeLDA(const Instruction& instruction)
 {
 	memory::Register& src = registers_[static_cast<uint8_t>(instruction.reg1)];

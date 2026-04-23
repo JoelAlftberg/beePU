@@ -31,6 +31,7 @@ private:
 	std::unordered_map<std::string, std::uint16_t> symbols_{};
 	std::vector<std::string> lines_{};
 	std::vector<uint16_t> outputBuf_{};
+	std::uint16_t originAddress_{0U};
 	std::uint16_t currentAddress_{0U};
 	MnemonicTable lookupTable_{};
 

@@ -15,25 +15,25 @@ Assembler::Assembler(const char* output, const char* format)
 	: outputFile_(output)
 	, outputFormat_(format)
 {
-	lookupTable_["ADD"] = { 0b00, 0b0000};
-	lookupTable_["AND"] = { 0b00, 0b0100};
-	lookupTable_["BEQ"] = { 0b10, 0b0001};
-	lookupTable_["BGT"] = { 0b10, 0b0011};
-	lookupTable_["BLT"] = { 0b10, 0b0100};
-	lookupTable_["BNE"] = { 0b10, 0b0010};
-	lookupTable_["HLT"] = { 0b11, 0b0000};
-	lookupTable_["JMP"] = { 0b11, 0b0011};
-	lookupTable_["JMPI"] = { 0b11, 0b0100};
-	lookupTable_["LDA"] = { 0b00, 0b0010};
-	lookupTable_["LLI"] = { 0b01, 0b0001};
-	lookupTable_["LUI"] = { 0b01, 0b0000};
-	lookupTable_["MOV"] = { 0b00, 0b0001};
-	lookupTable_["NOP"] = { 0b11, 0b0001};
-	lookupTable_["NOT"] = { 0b11, 0b0010};
-	lookupTable_["OR"] 	= { 0b00, 0b0011};
-	lookupTable_["STA"] = { 0b00, 0b0101};
-	lookupTable_["SUB"] = { 0b00, 0b0110};
-	lookupTable_["XOR"] = { 0b00, 0b0111};
+	lookupTable_["ADD"] 	= { 0b00, 0b0000};
+	lookupTable_["AND"] 	= { 0b00, 0b0100};
+	lookupTable_["BEQ"] 	= { 0b10, 0b0001};
+	lookupTable_["BGT"] 	= { 0b10, 0b0011};
+	lookupTable_["BLT"] 	= { 0b10, 0b0100};
+	lookupTable_["BNE"] 	= { 0b10, 0b0010};
+	lookupTable_["HLT"] 	= { 0b11, 0b0000};
+	lookupTable_["JMP"] 	= { 0b11, 0b0011};
+	lookupTable_["JMPI"] 	= { 0b10, 0b0000};
+	lookupTable_["LDA"] 	= { 0b00, 0b0010};
+	lookupTable_["LLI"] 	= { 0b01, 0b0001};
+	lookupTable_["LUI"] 	= { 0b01, 0b0000};
+	lookupTable_["MOV"] 	= { 0b00, 0b0001};
+	lookupTable_["NOP"] 	= { 0b11, 0b0001};
+	lookupTable_["NOT"] 	= { 0b11, 0b0010};
+	lookupTable_["OR"] 		= { 0b00, 0b0011};
+	lookupTable_["STA"] 	= { 0b00, 0b0101};
+	lookupTable_["SUB"] 	= { 0b00, 0b0110};
+	lookupTable_["XOR"] 	= { 0b00, 0b0111};
 }
 
 void Assembler::firstPass(std::string& line)
@@ -58,7 +58,8 @@ void Assembler::firstPass(std::string& line)
 
 	if (std::string::npos != origin_index)
 	{
-		currentAddress_ = static_cast<std::uint16_t>(std::stoul(line.substr(origin_index + 4), nullptr, 0U));
+		originAddress_ = static_cast<std::uint16_t>(std::stoul(line.substr(origin_index + 4), nullptr, 0U));
+		currentAddress_ = originAddress_;
 		return;
 	}
 
@@ -73,6 +74,9 @@ void Assembler::firstPass(std::string& line)
 
 void Assembler::secondPass()
 {
+
+	currentAddress_ = originAddress_;
+
 	for (const std::string& line : lines_)
 	{
 		std::vector<std::string> tokens = split(line);
@@ -125,16 +129,27 @@ void Assembler::secondPass()
 			}
 			case JUMP_OP:
 			{
-				// TODO: Calculate offset for labels and insert offset into immediate
-
 				if (tokenAmount < 2)
 				{	
 					std::cout << "Too few tokens found for a jump operation" << "\n";
 					continue;
 				}
 
-				std::uint16_t immediate = std::stoul(tokens[1], nullptr, 0U);
-				binaryRepr |= immediate;
+				auto iter = symbols_.find(tokens[1]);
+
+				if (iter != symbols_.end())
+				{
+					std::uint16_t labelAddress = iter->second;
+					std::uint16_t offset = labelAddress - currentAddress_;
+					binaryRepr |= offset;
+				}
+
+				else
+				{
+					std::uint16_t immediate = std::stoul(tokens[1], nullptr, 0U);
+					binaryRepr |= immediate;
+				}
+
 				break;
 			}
 			case SINGLE_REG_OP:
@@ -148,6 +163,7 @@ void Assembler::secondPass()
 			}
 		}
 
+		currentAddress_ += INSTRUCTION_WIDTH;
 		outputBuf_.push_back(binaryRepr);
 
 	}
@@ -181,5 +197,4 @@ void Assembler::writeOutput()
 		std::cout << "ERROR: Invalid format specified, should be either 'bin' or 'hex'" << "\n";
 		std::filesystem::remove(outputFile_);
 	}
-
 }

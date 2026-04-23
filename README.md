@@ -4,4 +4,8 @@ A 16-bit emulated CPU implementing a custom instruction set (bIS), with an accom
 Features
 * 16 registers
 * 64kB RAM
+* custom instruction set with 64 instructions
+
+Specification
+* little-endian
 

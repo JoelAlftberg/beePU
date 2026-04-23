@@ -19,6 +19,11 @@ The first two bits of the opcode `[15,14]` is used to select which format the in
 
 # Instructions
 
+Next free TWO_REG : 	`1000`/`0x08`  
+Next free IMMEDIATE : 	`0010`/`0x12`  
+Next free JUMP : 		`0110`/`0x25`  
+Next free SINGLE_REG : 	`0100`/`0x34`  
+
 ## ADD
 `00 0000 -- xxxx xxxx`  
 
@@ -71,11 +76,16 @@ The HLT instruction halts the operation of the CPU permanently.
 * Bits `[7:0]` are ignored in this opcode.
 
 ## JMP
-`10 0000 -- xxxx ----`  
+`11 0011 -- xxxx ----`  
 
 The JMP instruction jumps (sets the PC) to the address stored in the target register  
 * `[7:4]` - Target register
 * Bits `[3:0]` are ignored in this opcode.
+
+## JMPI
+`10 0000 xxxxxxxxxx`  
+The JMPI instruction jumps (sets the PC) based on the offset specified.  
+* `[9:0]` - Signed offset in bytes to jump
 
 ## LDA
 `00 0010 -- xxxx xxxx`  

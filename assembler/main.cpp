@@ -48,10 +48,6 @@ int main(int argc, char* argv[])
 		return 1; 
 	}
 
-	std::cout << "INPUT: " << input << "\n";
-	std::cout << "OUTPUT: " << output << "\n";
-	std::cout << "FORMAT: " << format << "\n";
-
 	std::ifstream source_file(input);
 	std::string line;
 
