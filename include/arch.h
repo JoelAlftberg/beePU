@@ -7,6 +7,7 @@ static constexpr std::uint8_t INSTRUCTION_WIDTH{2U};
 static constexpr std::uint32_t RAM_SIZE{0x10000};
 static constexpr std::uint8_t BYTE_WIDTH{8U};
 static constexpr std::uint8_t REG_AMOUNT{16U};
+static constexpr std::uint16_t LOWER_BYTE_MASK{0x00FF};
 
 static constexpr std::uint8_t FORMAT_SHIFT{14U};
 static constexpr std::uint8_t OPCODE_SHIFT{10U};

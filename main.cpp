@@ -9,14 +9,30 @@
 int main(int argc, char* argv[])
 {
 	cpu::CPU cpu{};
-	
 
-	std::vector<uint16_t> program = {
-		0b0100010101001000,		// LLI 01 0001, r1, immediate 72
-		0b0000010000010110,		// MOV 00 0000, r1, r6
-		0b0000000000010110,		// ADD 00 0001, r1, r6
-		0b1100000000000000,		// HLT 11 0000
-	};
+	const char* inputBinary = argv[1];
+
+	if (argc < 2)
+	{
+		std::cout << "Usage: beePU <program.bin>" << "\n";
+		return 1;
+	}
+	
+	if (!std::filesystem::is_regular_file(inputBinary)) 
+	{ 
+		std::cout << "ERROR: File \"" << inputBinary << "\" not found" << "\n"; 
+		return 1; 
+	}
+
+	std::ifstream inputStream(inputBinary, std::ios::binary);
+	std::vector<uint16_t> program;
+	
+	std::uint16_t word;
+
+	while(inputStream.read(reinterpret_cast<char*>(&word), sizeof(uint16_t)))
+	{
+		program.push_back(word);
+	}
 
 	cpu.loadProgram(program, 0);
 
