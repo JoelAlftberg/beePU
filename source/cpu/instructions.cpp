@@ -106,7 +106,7 @@ void CPU::executeLLI(const Instruction& instruction)
 void CPU::executeLUI(const Instruction& instruction)
 {
 	memory::Register& dst = registers_[static_cast<std::uint8_t>(instruction.reg1)];
-	dst.write(instruction.immediate << 8U);
+	dst.write((dst.read() & LOWER_BYTE_MASK) | (instruction.immediate << BYTE_WIDTH));
 }
 
 void CPU::executeMOV(const Instruction& instruction)

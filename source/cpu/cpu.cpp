@@ -14,7 +14,7 @@ void CPU::printState()
 {
 	for(uint8_t i = 0; i < REG_AMOUNT; ++i)
 	{
-		std::cout << "R" << (int)i << ": " << (int)registers_[i].read() <<  "\n";
+		std::cout << "R" << std::dec << (int)i << ": 0x" << std::hex << std::setw(0) << (int)registers_[i].read() << "\n";
 	}
 }
 
