@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 #include "assembler.h"
 
@@ -54,12 +55,15 @@ int main(int argc, char* argv[])
 	std::ifstream source_file(input);
 	std::string line;
 
-	Assembler assembler{};
+	Assembler assembler{output, format};
 
 	while (std::getline(source_file, line))
 	{
 		assembler.firstPass(line);
 	}
 
+	assembler.secondPass();
+	assembler.writeOutput();
+	
 	return 0;
 }
