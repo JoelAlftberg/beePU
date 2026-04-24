@@ -32,11 +32,21 @@ public:
 		return (flags_ >> static_cast<std::uint8_t>(f)) & 1U; 
 	}
 
+	std::uint16_t read() const
+	{
+		return flags_;
+	}
+
+	void clear()
+	{
+		flags_ = 0U;
+	}
+
 	Flags() = default;
 	~Flags() = default;
 
 private:
-	std::uint16_t flags_{0U};
+	std::uint8_t flags_{0U};
 
 };
 

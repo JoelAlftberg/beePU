@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+
 #include "arch.h"
 
 namespace memory
@@ -38,6 +39,11 @@ public:
 	void write(std::uint16_t word)
 	{
 		value_ = word;
+	}
+
+	void clear()
+	{
+		value_ = 0U;
 	}
 
 	Register() = default;

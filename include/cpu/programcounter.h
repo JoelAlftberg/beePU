@@ -27,6 +27,11 @@ public:
 		value_ += offset;
 	}
 
+	void reset()
+	{
+		value_ = 0U;
+	}
+
 	ProgramCounter() = default;
 	~ProgramCounter() = default;
 

@@ -79,7 +79,7 @@ void Assembler::secondPass()
 
 	for (const std::string& line : lines_)
 	{
-		std::vector<std::string> tokens = split(line);
+		std::vector<std::string> tokens = utils::split(line);
 		std::size_t tokenAmount = tokens.size();
 
 		if (tokenAmount > 3)

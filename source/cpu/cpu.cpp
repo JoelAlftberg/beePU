@@ -33,19 +33,45 @@ CPU::CPU()
 	opcode_table_[0x07] = &CPU::executeXOR;
 }
 
-void CPU::printState()
-{
-	for(uint8_t i = 0; i < REG_AMOUNT; ++i)
-	{
-		std::cout << "R" << std::dec << (int)i << ": 0x" << std::hex << std::setw(0) << (int)registers_[i].read() << "\n";
-	}
-}
+
 
 void CPU::loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr)
 {
 	for (size_t i = 0; i < program.size(); ++i)
 	{
 		ram_.writeWord(program[i], start_addr + i * 2);
+	}
+}
+
+Status CPU::getStatus()
+{
+	Status status{};
+	status.pc = pc_.read();
+
+	for (std::size_t i{0U}; i < registers_.size(); ++i)
+	{
+		status.registers[i] = registers_[i].read();
+	}
+	
+	status.flags = flags_.read();
+	status.halted = halted_;
+
+	return status;
+}
+
+void CPU::reset()
+{
+	clearRegisters();
+	pc_.reset();
+	flags_.clear();
+	halted_ = false;
+}
+
+void CPU::clearRegisters()
+{
+	for (memory::Register& reg :  registers_)
+	{
+		reg.clear();
 	}
 }
 

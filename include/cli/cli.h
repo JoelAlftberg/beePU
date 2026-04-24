@@ -30,10 +30,13 @@ public:
 	Output evaluateInput(const Input& input);
 	void printOutput(const Output& output);
 
+	bool shouldExit() { return shouldExit_; }
+
 	Output handleRun(const std::vector<std::string>&);
 	Output handlePause(const std::vector<std::string>&);
 	Output handleStep(const std::vector<std::string>&);
 	Output handleBreak(const std::vector<std::string>&);
+	Output handleReset(const std::vector<std::string>&);
 	Output handleGet(const std::vector<std::string>&);
 	Output handleSet(const std::vector<std::string>&);
 	Output handleStatus(const std::vector<std::string>&);
@@ -47,6 +50,7 @@ private:
 	cpu::CPU& cpu_;
 	utils::DispatchTable<Output(const std::vector<std::string>&)> commandTable_;
 	std::unordered_set<std::uint16_t> breakpoints_;
+	bool shouldExit_;
 
 };
 

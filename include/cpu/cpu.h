@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
@@ -15,37 +16,44 @@
 namespace cpu
 {
 
+struct Status
+{
+	std::uint16_t pc;
+	std::array<std::uint16_t, REG_AMOUNT> registers;
+	std::uint16_t flags;
+	bool halted;
+};
+
 class CPU
 {
 
 public:
 
-	void printState();
 	void loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr = 0);
-
+	Status getStatus();
+	std::uint16_t getProgramCounter();
+	void clearRegisters();
 	bool halted() const { return halted_; }
 
 	std::uint16_t fetch();
-	std::uint16_t getProgramCounter();
-
 	Instruction decode(std::uint16_t instruction_bits);
-
 	void execute(Instruction instruction);
 	void step();
+	void reset();
 
 	CPU();
 	~CPU() = default;
 
 private:
 
-	memory::Register registers_[REG_AMOUNT];
+	std::array<memory::Register, REG_AMOUNT> registers_;
 	memory::RAM ram_;
 	cpu::ProgramCounter pc_;
 	cpu::Flags flags_;
 	bool halted_ = false;
 
 	using Handler = void (CPU::*)(const Instruction&);
-	Handler opcode_table_[64U]{};
+	std::array<Handler, 64U> opcode_table_{};
 
 	void executeADD(const Instruction& instruction);
 	void executeAND(const Instruction& instruction);
