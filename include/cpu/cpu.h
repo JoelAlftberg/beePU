@@ -33,6 +33,9 @@ public:
 	Status getStatus();
 	std::uint16_t getProgramCounter();
 	void clearRegisters();
+
+	std::uint16_t getRegValue(std::string regIndex);
+
 	bool halted() const { return halted_; }
 
 	std::uint16_t fetch();

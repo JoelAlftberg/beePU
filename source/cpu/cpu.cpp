@@ -75,6 +75,28 @@ void CPU::clearRegisters()
 	}
 }
 
+std::uint16_t CPU::getRegValue(std::string reg)
+{
+
+	std::uint16_t regIndex{0U}; 
+
+	if (std::toupper(reg[0]) != 'R')
+	{
+		throw std::invalid_argument("Invalid argument for <reg>: Unrecognized register");
+	}
+
+	try { regIndex = std::stoul(reg.substr(1), nullptr , 0);}
+	catch (const std::exception&) { throw std::invalid_argument("Invalid argument for <reg>: Unrecognized register"); }
+	
+	if (regIndex > REG_AMOUNT - 1)
+	{
+		throw std::invalid_argument("Invalid argument for <reg>: Register does not exist");
+	}
+
+	return registers_[regIndex].read();
+
+}
+
 std::uint16_t CPU::getProgramCounter()
 {
 	return pc_.read();

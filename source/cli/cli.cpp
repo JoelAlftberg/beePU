@@ -88,11 +88,10 @@ Output CLI::handleRun(const std::vector<std::string>& arguments)
 		}
 		if (breakpoints_.end() != breakpoints_.find(currentAddress))
 		{
-			output.lines.push_back(std::format("Breakpoint hit @ 0x{:04x}", currentAddress));
+			output.lines.push_back(std::format("Breakpoint hit @ 0x{:04X}", currentAddress));
 			return output;
 		}
 	}
-
 }
 
 Output CLI::handlePause(const std::vector<std::string>& arguments)
@@ -189,15 +188,80 @@ Output CLI::handleReset(const std::vector<std::string>& arguments)
 	return Output{{"CPU Reset"}};
 }
 
-
 Output CLI::handleGet(const std::vector<std::string>& arguments)
 {
-	return Output{};
+	Output output{};
+
+	if (arguments.empty())
+	{
+		return handleHelp({"get"});
+	}
+	
+	if ("reg" == arguments[0])
+	{
+		if (arguments.size() < 2)
+		{
+			for(std::uint8_t i = 0; i < REG_AMOUNT; ++i)
+			{
+				std::uint16_t regValue{0U};
+				std::string regIndex = std::format("R{}", i);
+				try {
+					regValue = cpu_.getRegValue(regIndex);
+				}
+				catch (const std::exception& e)
+				{
+					output.lines.push_back(e.what());
+					return output;
+				}
+				output.lines.push_back(std::format("{}: 0x{:04X}", regIndex, regValue));
+			}
+		}
+		else
+		{
+			std::uint16_t regValue{0U};
+			std::string reg = arguments[1];
+
+			try {
+				regValue = cpu_.getRegValue(reg);
+			}
+			catch (const std::exception& e)
+			{
+				output.lines.push_back(e.what());
+				return output;
+			}
+
+			output.lines.push_back(std::format("{}: 0x{:04X}", arguments[1], regValue));
+		}
+		
+	}
+	// TODO: Depens on adding readMemory(start_address, end_address)
+	else if ("mem" == arguments[0])
+	{
+
+	}
+
+	return output;
 }
 
+// TODO: Depends on adding writeMemory(address, data) and setRegisterValue(regsiter, value)
 Output CLI::handleSet(const std::vector<std::string>& arguments)
 {
-	return Output{};
+	Output output{};
+
+	if (arguments.empty())
+	{
+		return handleHelp({"set"});
+	}
+
+	if ("reg" == arguments[0])
+	{
+	}
+
+	else if ("mem" == arguments[0])
+	{
+
+	}
+	return output;
 }
 
 Output CLI::handleStatus(const std::vector<std::string>& arguments)
@@ -209,7 +273,7 @@ Output CLI::handleStatus(const std::vector<std::string>& arguments)
 	std::string state = status.halted ? "Halted" : "Ready";
 
 	output.lines.push_back(std::format("CPU State: {}", state));
-	output.lines.push_back(std::format("Flags: N={} Z={} C={} V={}", status.flags & 0x01, status.flags & 0x00, status.flags & 0x02, status.flags & 0x03));
+	output.lines.push_back(std::format("Flags: N={} Z={} C={} V={}", status.flags & 0x02, status.flags & 0x01, status.flags & 0x04, status.flags & 0x08));
 	output.lines.push_back(std::format("PC @ (0x{:04X})", status.pc));
 	for(std::size_t i{0U}; i < status.registers.size(); ++i)
 	{
@@ -221,7 +285,124 @@ Output CLI::handleStatus(const std::vector<std::string>& arguments)
 
 Output CLI::handleHelp(const std::vector<std::string>& arguments)
 {
-	return Output{};
+	Output output{};
+
+	if (arguments.empty())
+	{
+		output.lines.push_back("Usage: help <command> for command usage instructions");
+		output.lines.push_back("run 	-  Run the loaded binary");
+		output.lines.push_back("step 	-  Step the loaded binary");
+		output.lines.push_back("break	-  Set breakpoints");
+		output.lines.push_back("reset 	-  Reset the CPU");
+		output.lines.push_back("get 	-  Get data from registers/memory");
+		output.lines.push_back("set 	-  Set data in of register/memory");
+		output.lines.push_back("status 	-  Get the status of the CPU");
+		output.lines.push_back("exit 	-  Exit the emulator");
+	}
+	
+	else if ("break" == arguments[0])
+	{
+		output.lines.push_back("Usage: break <addr> <...>");
+		output.lines.push_back("	Set breakpoints at one or more specified addresses");
+		output.lines.push_back("	Running the command without any address specified lists all breakpoints");
+	}
+	else if ("step" == arguments[0])
+	{
+		output.lines.push_back("Usage: step <n>");
+		output.lines.push_back("	Steps the binary <n> amount of times");
+		output.lines.push_back("	Running the command without any arguments will step the program once");
+	}
+	else if ("reset" == arguments[0])
+	{
+		output.lines.push_back("Usage: reset");
+		output.lines.push_back("	Resets all registers, flags and the PC of the CPU");
+		output.lines.push_back("	Note: Does not reset breakpoints or RAM");
+	}
+	else if ("status" == arguments[0])
+	{
+		output.lines.push_back("Usage: status");
+		output.lines.push_back("	Shows the status of all the PC, flags and registers and the CPU state");
+	}
+	else if ("get" == arguments[0])
+	{
+		output.lines.push_back("Usage: get <submodule> [<arg>] [<...>]");
+		output.lines.push_back("	Gets data from the submodule specified");
+		output.lines.push_back("	Available submodules");
+		output.lines.push_back("	* mem - For detailed usage run 'help get mem'");
+		output.lines.push_back("	* reg - For detailed usage run 'help get reg'");
+		if (arguments.size() > 1 && "mem" == arguments[1])
+		{
+			output.lines.clear();
+			output.lines.push_back("");
+			output.lines.push_back("Description:");
+			output.lines.push_back(" Gets data from memory");
+			output.lines.push_back("");
+			output.lines.push_back("Usage:");
+			output.lines.push_back(" get mem			- Dumps all available memory");
+			output.lines.push_back(" get mem <addr>			- Dumps data at specific address");
+			output.lines.push_back(" get mem <start> <end>		- Dumps a range of memory");
+			output.lines.push_back("");
+			output.lines.push_back("Options:");
+			output.lines.push_back(" <addr>		Hexadecimal address (e.g., 0x014F)");
+			output.lines.push_back(" <start>	Beginning of the range");
+			output.lines.push_back(" <end>		End of the range (inclusive)");
+		}
+		if (arguments.size() > 1 && "reg" == arguments[1])
+		{
+			output.lines.clear();
+			output.lines.push_back("");
+			output.lines.push_back("Description:");
+			output.lines.push_back(" Gets values from registers");
+			output.lines.push_back("");
+			output.lines.push_back("Usage:");
+			output.lines.push_back(" get reg 	- Gets values of all registers");
+			output.lines.push_back(" get reg <reg> 	- Gets the value of a specified register");
+			output.lines.push_back("");
+			output.lines.push_back("Options:");
+			output.lines.push_back(" <reg>		Register");
+		}
+	}
+	else if ("set" == arguments[0])
+	{
+		output.lines.push_back("Usage: set <submodule> [<arg>] [<...>]");
+		output.lines.push_back("	Sets data for the submodule specified");
+		output.lines.push_back("	Available submodules");
+		output.lines.push_back("	* mem - For detailed usage run 'help set mem'");
+		output.lines.push_back("	* reg - For detailed usage run 'help set reg'");
+		if (arguments.size() > 1 && "mem" == arguments[1])
+		{
+			output.lines.clear();
+			output.lines.push_back("");
+			output.lines.push_back("Description:");
+			output.lines.push_back(" Sets data at an address in memory");
+			output.lines.push_back("");
+			output.lines.push_back("Usage:");
+			output.lines.push_back(" set mem <addr> <data>	- Sets the data at a specified address");
+			output.lines.push_back("");
+			output.lines.push_back("Options:");
+			output.lines.push_back(" <addr>		Hexadecimal address (e.g., 0x014F)");
+			output.lines.push_back(" <data>		Data to store");
+
+
+		}
+		if (arguments.size() > 1 && "reg" == arguments[1])
+		{
+			output.lines.clear();
+			output.lines.push_back("");
+			output.lines.push_back("Description:");
+			output.lines.push_back(" Sets the value of a registers");
+			output.lines.push_back("");
+			output.lines.push_back("Usage:");
+			output.lines.push_back(" set reg <reg> <value>	- Sets the value of a specified registered");
+			output.lines.push_back("");
+			output.lines.push_back("Options:");
+			output.lines.push_back(" <reg>		Register");
+			output.lines.push_back(" <value>	Value to store");
+		}
+	}
+
+	output.lines.push_back("");
+	return output;
 }
 
 Output CLI::handleExit(const std::vector<std::string>& arguments)
