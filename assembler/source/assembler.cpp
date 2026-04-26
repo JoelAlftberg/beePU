@@ -38,6 +38,12 @@ Assembler::Assembler(const char* output, const char* format)
 
 void Assembler::firstPass(std::string& line)
 {
+
+	if (std::string::npos == line.find_first_not_of(" \t"))
+	{
+		return;
+	}
+
 	line = line.substr(line.find_first_not_of(" \t"));
 
 	size_t origin_index = line.find(".org");
@@ -47,6 +53,10 @@ void Assembler::firstPass(std::string& line)
 	if (std::string::npos != comment_index)
 	{
 		line = line.substr(0, comment_index);
+		if (std::string::npos == line.find_first_not_of(" \t"))
+		{
+			return;
+		}
 	}
 
 	if (std::string::npos != label_index)
@@ -63,10 +73,6 @@ void Assembler::firstPass(std::string& line)
 		return;
 	}
 
-	if (line.empty())
-	{
-		return;
-	}
 
 	lines_.push_back(line);
 	currentAddress_ += INSTRUCTION_WIDTH;
@@ -82,6 +88,11 @@ void Assembler::secondPass()
 		std::vector<std::string> tokens = utils::split(line);
 		std::size_t tokenAmount = tokens.size();
 
+		if (tokens.empty())
+		{
+			continue;
+		}
+		
 		if (tokenAmount > 3)
 		{
 			std::cout << "Line '" << line << "' contains more than 3 tokens, check syntax" << "\n";
@@ -139,9 +150,12 @@ void Assembler::secondPass()
 
 				if (iter != symbols_.end())
 				{
+					std::cout << "Label: " << iter->first << "\n" << "Address: " << iter->second << "\n";
 					std::uint16_t labelAddress = iter->second;
-					std::uint16_t offset = labelAddress - currentAddress_;
-					binaryRepr |= offset;
+					std::uint16_t offset = labelAddress - (currentAddress_ + INSTRUCTION_WIDTH);
+					std::cout << "Offset: " << (offset & 0x3FF) << "\n";
+
+					binaryRepr |= (offset & 0x3FF);
 				}
 
 				else

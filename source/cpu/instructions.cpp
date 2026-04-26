@@ -9,6 +9,8 @@ void CPU::executeADD(const Instruction& instruction)
 	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg2)];
 	std::uint32_t sum = static_cast<uint32_t>(dst.read()) + static_cast<uint32_t>(src.read());
 
+	flags_.clear();
+
 	if (sum > 0xFFFF) {
 		flags_.setFlag(Flag::Carry);
 		flags_.setFlag(Flag::Overflow); 
@@ -159,6 +161,7 @@ void CPU::executeSUB(const Instruction& instruction)
 	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg2)];
 	std::uint32_t diff = dst.read() - src.read();
 
+	flags_.clear();
 	if (src.read() > dst.read()) {
 		flags_.setFlag(Flag::Carry);
 		flags_.setFlag(Flag::Overflow); 

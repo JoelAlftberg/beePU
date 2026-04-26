@@ -32,6 +32,8 @@ public:
 	void loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr = 0);
 	Status getStatus();
 	std::uint16_t getProgramCounter();
+	std::uint16_t readMemory(std::uint16_t address);
+	std::vector<uint16_t> readMemoryRange(std::uint16_t startAddr, std::uint16_t endAddr);
 	void clearRegisters();
 
 	std::uint16_t getRegValue(std::string regIndex);

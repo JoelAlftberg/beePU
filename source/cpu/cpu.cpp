@@ -102,6 +102,33 @@ std::uint16_t CPU::getProgramCounter()
 	return pc_.read();
 }
 
+std::uint16_t CPU::readMemory(std::uint16_t address)
+{
+	return ram_.read(address);
+}
+
+std::vector<uint16_t> CPU::readMemoryRange(std::uint16_t startAddr, std::uint16_t endAddr)
+{
+	std::vector<uint16_t> memoryData{};
+
+	if (startAddr > 0xFFFF or startAddr > 0xFFFF)
+	{
+		throw std::invalid_argument("Invalid argument: Start/End address out of bounds");
+	}
+	if (startAddr > endAddr){
+		throw std::invalid_argument("Invalid argument: start address must be lower than end address");
+	}
+
+	for (std::size_t i = startAddr; i <= endAddr; ++i)
+	{
+		std::uint16_t memData = ram_.read(i);
+		memoryData.push_back(memData);
+	}
+
+	return memoryData;
+
+}
+
 std::uint16_t CPU::fetch()
 {
 	std::uint16_t instruction = ram_.readWord(pc_.read());

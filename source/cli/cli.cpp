@@ -234,16 +234,48 @@ Output CLI::handleGet(const std::vector<std::string>& arguments)
 		}
 		
 	}
-	// TODO: Depens on adding readMemory(start_address, end_address)
 	else if ("mem" == arguments[0])
 	{
+		std::vector<std::uint16_t> memoryData{};
+
+		if(2U == arguments.size())
+		{
+			try
+			{
+				std::uint16_t address = std::stoul(arguments[1], nullptr, 0);
+				output.lines.push_back(std::format("(0x{:04X}):	{:02X}", address ,cpu_.readMemory(address)));
+			}
+			catch(const std::exception& e)
+			{
+				std::cerr << e.what() << '\n';
+			}
+			
+		}
+		if (arguments.size() > 2)
+		{
+			try
+			{
+				std::uint16_t startAddr = std::stoul(arguments[1], nullptr, 0);
+				std::uint16_t endAddr = std::stoul(arguments[2], nullptr, 0);
+				memoryData = cpu_.readMemoryRange(startAddr, endAddr);
+				for (std::size_t i = 0; i < memoryData.size(); ++i)
+				{
+					output.lines.push_back(std::format("(0x{:04X}):	0x{:02X}", startAddr++, memoryData[i]));
+				}
+			}
+			catch(const std::exception& e)
+			{
+				output.lines.push_back(e.what());
+			}
+		}
 
 	}
 
 	return output;
 }
 
-// TODO: Depends on adding writeMemory(address, data) and setRegisterValue(regsiter, value)
+// TODO in cli-set branch
+// Depends on adding writeMemory(address, data) and setRegisterValue(regsiter, value)
 Output CLI::handleSet(const std::vector<std::string>& arguments)
 {
 	Output output{};
@@ -273,7 +305,13 @@ Output CLI::handleStatus(const std::vector<std::string>& arguments)
 	std::string state = status.halted ? "Halted" : "Ready";
 
 	output.lines.push_back(std::format("CPU State: {}", state));
-	output.lines.push_back(std::format("Flags: N={} Z={} C={} V={}", status.flags & 0x02, status.flags & 0x01, status.flags & 0x04, status.flags & 0x08));
+	
+	std::uint8_t flagN = (status.flags & 0x02) != 0U ? 1U : 0U;
+	std::uint8_t flagZ = (status.flags & 0x01) != 0U ? 1U : 0U;
+	std::uint8_t flagC = (status.flags & 0x04) != 0U ? 1U : 0U;
+	std::uint8_t flagV = (status.flags & 0x08) != 0U ? 1U : 0U;
+
+	output.lines.push_back(std::format("Flags: N={} Z={} C={} V={}", flagN, flagZ, flagC, flagV));
 	output.lines.push_back(std::format("PC @ (0x{:04X})", status.pc));
 	for(std::size_t i{0U}; i < status.registers.size(); ++i)
 	{
@@ -408,7 +446,6 @@ Output CLI::handleHelp(const std::vector<std::string>& arguments)
 Output CLI::handleExit(const std::vector<std::string>& arguments)
 {
 	Output output{};
-	output.lines.push_back("Exiting");
 	shouldExit_ = true;
 
 	return output;
