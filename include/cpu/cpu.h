@@ -9,7 +9,8 @@
 #include "cpu/flags.h"
 #include "cpu/instruction.h"
 #include "cpu/programcounter.h"
-#include "memory/ram.h"
+#include "memory/memory.h"
+#include "memory/memorycontroller.h"
 #include "memory/register.h"
 #include "arch.h"
 
@@ -52,7 +53,7 @@ public:
 private:
 
 	std::array<memory::Register, REG_AMOUNT> registers_;
-	memory::RAM ram_;
+	memory::MemoryController memController_{};
 	cpu::ProgramCounter pc_;
 	cpu::Flags flags_;
 	bool halted_ = false;
@@ -66,6 +67,7 @@ private:
 	void executeBGT(const Instruction& instruction);
 	void executeBLT(const Instruction& instruction);
 	void executeBNE(const Instruction& instruction);
+	void executeBNK(const Instruction& instruction);
 	void executeHLT(const Instruction& instruction);
 	void executeJMP(const Instruction& instruction);
 	void executeJMPI(const Instruction& instruction);

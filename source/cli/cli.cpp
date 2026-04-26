@@ -73,6 +73,7 @@ Output CLI::handleRun(const std::vector<std::string>& arguments)
 {
 
 	Output output{};
+	
 	while(true)
 	{
 		std::uint16_t currentAddress = cpu_.getProgramCounter();

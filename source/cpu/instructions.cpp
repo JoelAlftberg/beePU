@@ -70,6 +70,12 @@ void CPU::executeBNE(const Instruction& instruction)
 	}
 }
 
+void CPU::executeBNK(const Instruction& instruction)
+{
+	std::uint8_t bankIndex = registers_[BANK_REGISTER].read();
+	memController_.switchBank(bankIndex);
+}
+
 void CPU::executeHLT(const Instruction& instruction)
 {
 	halted_ = true;
@@ -94,7 +100,7 @@ void CPU::executeLDA(const Instruction& instruction)
 	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg2)];
 
 	std::uint16_t addr = src.read();
-	std::uint16_t data = ram_.readWord(addr);
+	std::uint16_t data = memController_.readWord(addr);
 
 	dst.write(data);
 }
@@ -152,7 +158,7 @@ void CPU::executeSTA(const Instruction& instruction)
 	std::uint16_t data = src.read();
 	std::uint16_t addr = dst.read();
 
-	ram_.writeWord(data, addr);
+	memController_.writeWord(data, addr);
 }
 
 void CPU::executeSUB(const Instruction& instruction)

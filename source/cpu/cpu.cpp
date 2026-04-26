@@ -4,7 +4,6 @@
 
 #include "cpu/cpu.h"
 #include "cpu/instruction.h"
-#include "memory/ram.h"
 #include "memory/register.h"
 
 namespace cpu
@@ -18,6 +17,7 @@ CPU::CPU()
 	opcode_table_[0x23] = &CPU::executeBGT;
 	opcode_table_[0x24] = &CPU::executeBLT;
 	opcode_table_[0x22] = &CPU::executeBNE;
+	opcode_table_[0x34] = &CPU::executeBNK;
 	opcode_table_[0x30] = &CPU::executeHLT;
 	opcode_table_[0x33] = &CPU::executeJMP;
 	opcode_table_[0x20] = &CPU::executeJMPI;
@@ -39,7 +39,7 @@ void CPU::loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr)
 {
 	for (size_t i = 0; i < program.size(); ++i)
 	{
-		ram_.writeWord(program[i], start_addr + i * 2);
+		memController_.writeWord(program[i], start_addr + i * 2);
 	}
 }
 
@@ -64,6 +64,7 @@ void CPU::reset()
 	clearRegisters();
 	pc_.reset();
 	flags_.clear();
+	memController_.switchBank(DEFAULT_BANK);
 	halted_ = false;
 }
 
@@ -104,7 +105,7 @@ std::uint16_t CPU::getProgramCounter()
 
 std::uint16_t CPU::readMemory(std::uint16_t address)
 {
-	return ram_.read(address);
+	return memController_.read(address);
 }
 
 std::vector<uint16_t> CPU::readMemoryRange(std::uint16_t startAddr, std::uint16_t endAddr)
@@ -121,7 +122,7 @@ std::vector<uint16_t> CPU::readMemoryRange(std::uint16_t startAddr, std::uint16_
 
 	for (std::size_t i = startAddr; i <= endAddr; ++i)
 	{
-		std::uint16_t memData = ram_.read(i);
+		std::uint16_t memData = memController_.read(i);
 		memoryData.push_back(memData);
 	}
 
@@ -131,7 +132,7 @@ std::vector<uint16_t> CPU::readMemoryRange(std::uint16_t startAddr, std::uint16_
 
 std::uint16_t CPU::fetch()
 {
-	std::uint16_t instruction = ram_.readWord(pc_.read());
+	std::uint16_t instruction = memController_.readWord(pc_.read());
 	pc_.increment();
 	return instruction;
 }
