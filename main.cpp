@@ -3,12 +3,15 @@
 #include <iostream>
 #include <vector>
 
+#include "cli/cli.h"
 #include "cpu/cpu.h"
 #include "memory/ram.h"
 
 int main(int argc, char* argv[])
 {
+	
 	cpu::CPU cpu{};
+	cli::CLI cli{cpu};
 
 	const char* inputBinary = argv[1];
 
@@ -25,24 +28,24 @@ int main(int argc, char* argv[])
 	}
 
 	std::ifstream inputStream(inputBinary, std::ios::binary);
-	std::vector<uint16_t> program;
+	std::vector<uint16_t> programBinary;
 	
 	std::uint16_t word;
 
 	while(inputStream.read(reinterpret_cast<char*>(&word), sizeof(uint16_t)))
 	{
-		program.push_back(word);
+		programBinary.push_back(word);
 	}
 
-	cpu.loadProgram(program, 0);
+	cpu.loadProgram(programBinary, 0);
 
-	while(!cpu.halted())
+	while(!cli.shouldExit())
 	{
-		std::cin.get();
-		cpu.step();
-		if (cpu.halted()){ return 0;}
-		cpu.printState();
-
+		cli::Input input{cli.readInput()};
+		cli::Output output{cli.evaluateInput(input)};
+		cli.printOutput(output);
 	}
+
+	return 0;
 
 }

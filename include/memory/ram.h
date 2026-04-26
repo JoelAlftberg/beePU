@@ -38,7 +38,7 @@ public:
 	}
 
 private:
-	std::uint8_t data_[RAM_SIZE];
+	std::uint8_t data_[RAM_SIZE]{};
 
 };
 
