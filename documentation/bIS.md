@@ -64,6 +64,11 @@ The BNE instruction jumps to the specified *signed* offset if the Z flag is **no
 The offset has the range -512 to +511 bytes.
 * `[9:0]` - Signed offset in bytes to jump on branch
 
+## BNK
+`01 0010 -- ---- ----`
+
+Switches memory bank to the bank specified in the Register `R10` (Bank Register).  
+
 ## HLT
 `11 0000 -- ---- ----`  
 
@@ -88,6 +93,12 @@ The JMPI instruction jumps (sets the PC) based on the offset specified.
 The LDA instruction loads the value at the *address* which the source register holds to the destination register.  
 * `[7:4]` -  Source register, containing an address
 * `[3:0]` - Destination register (where the data is to be stored)
+
+## LDI
+`11 0100 -- xxxx xxxx`  
+The LDA instruction loads a 4 bit value immediately to a destination register.  
+* `[7:4]` -  Destination register
+* `[3:0]` - Value to store
 
 ## LLI
 `01 0001 xx xxxxxxxx`  

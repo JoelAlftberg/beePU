@@ -5,7 +5,7 @@
 
 #include "cli/cli.h"
 #include "cpu/cpu.h"
-#include "memory/ram.h"
+#include "memory/memory.h"
 
 int main(int argc, char* argv[])
 {

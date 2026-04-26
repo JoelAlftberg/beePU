@@ -3,15 +3,26 @@
 #include "arch.h"
 
 #include <cstdint>
+#include <vector>
 
 namespace memory
 {
 
-class RAM
+class Memory
 {
 
 public:
+
+	Memory()
+	{
+		data_.assign(BANK_MEM_SIZE, 0U);
+	}
 	
+	Memory(std::size_t size)
+	{
+		data_.assign(size, 0U);
+	}
+
 	void write(std::uint8_t value, std::uint16_t address)
 	{
 		data_[address] = value;
@@ -38,7 +49,7 @@ public:
 	}
 
 private:
-	std::uint8_t data_[RAM_SIZE]{};
+	std::vector<uint8_t> data_{};
 
 };
 

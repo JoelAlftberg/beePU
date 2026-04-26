@@ -21,6 +21,7 @@ Assembler::Assembler(const char* output, const char* format)
 	lookupTable_["BGT"] 	= { 0b10, 0b0011};
 	lookupTable_["BLT"] 	= { 0b10, 0b0100};
 	lookupTable_["BNE"] 	= { 0b10, 0b0010};
+	lookupTable_["BNK"] 	= { 0b11, 0b0100};
 	lookupTable_["HLT"] 	= { 0b11, 0b0000};
 	lookupTable_["JMP"] 	= { 0b11, 0b0011};
 	lookupTable_["JMPI"] 	= { 0b10, 0b0000};
