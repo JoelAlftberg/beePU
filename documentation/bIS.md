@@ -64,7 +64,7 @@ The BNE instruction jumps to the specified *signed* offset if the Z flag is **no
 The offset has the range -512 to +511 bytes.
 * `[9:0]` - Signed offset in bytes to jump on branch
 
-## BNK
+## BANK
 `01 0010 -- ---- ----`
 
 Switches memory bank to the bank specified in the Register `R10` (Bank Register).  

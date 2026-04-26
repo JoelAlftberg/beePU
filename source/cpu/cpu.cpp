@@ -11,13 +11,17 @@ namespace cpu
 
 CPU::CPU()
 {
+	
+	registers_[STACK_POINTER_REGISTER].write(BANK_MEM_SIZE - 1);
+
 	opcode_table_[0x00] = &CPU::executeADD;
 	opcode_table_[0x04] = &CPU::executeAND;
 	opcode_table_[0x21] = &CPU::executeBEQ;
 	opcode_table_[0x23] = &CPU::executeBGT;
 	opcode_table_[0x24] = &CPU::executeBLT;
 	opcode_table_[0x22] = &CPU::executeBNE;
-	opcode_table_[0x34] = &CPU::executeBNK;
+	opcode_table_[0x34] = &CPU::executeBANK;
+	opcode_table_[0x37] = &CPU::executeCALL;
 	opcode_table_[0x30] = &CPU::executeHLT;
 	opcode_table_[0x33] = &CPU::executeJMP;
 	opcode_table_[0x20] = &CPU::executeJMPI;
@@ -28,6 +32,9 @@ CPU::CPU()
 	opcode_table_[0x31] = &CPU::executeNOP;
 	opcode_table_[0x32] = &CPU::executeNOT;
 	opcode_table_[0x03] = &CPU::executeOR;
+	opcode_table_[0x35] = &CPU::executePOP;
+	opcode_table_[0x36] = &CPU::executePUSH;
+	opcode_table_[0x38] = &CPU::executeRET;
 	opcode_table_[0x05] = &CPU::executeSTA;
 	opcode_table_[0x06] = &CPU::executeSUB;
 	opcode_table_[0x07] = &CPU::executeXOR;
@@ -65,6 +72,7 @@ void CPU::reset()
 	pc_.reset();
 	flags_.clear();
 	memController_.switchBank(DEFAULT_BANK);
+	registers_[STACK_POINTER_REGISTER].write(BANK_MEM_SIZE - 1);
 	halted_ = false;
 }
 
