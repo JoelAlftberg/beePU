@@ -4,7 +4,7 @@ default: clean build
 
 build:
 	mkdir -p build
-	g++ main.cpp -Wall -Werror -std=c++23 source/cpu/cpu.cpp source/cpu/instructions.cpp source/cli/cli.cpp source/memory/memorycontroller.cpp -I include -I lib -o build/beePU
+	g++ -Wall -Werror -std=c++23 source/main.cpp source/cpu/cpu.cpp source/cpu/instructions.cpp source/cli/cli.cpp source/memory/memorycontroller.cpp -I include -I lib -o build/beePU
 
 clean:
 	rm -rf build
