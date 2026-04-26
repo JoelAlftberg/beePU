@@ -40,6 +40,21 @@ LDA r1, r12
 ; Pop the value we pushed earlier (0x80FF) into r6 
 POP r6
 
+; Multiply r3 (0x1010) with r2 (0x0003)
+LLI r2, 0x03
+MUL r2, r3
+
+; Divide r3 (0x3030) with r2 (0x0006)
+LLI r2, 0x06
+DIV r2, r3
+
+; Shift r3 (0x0808) << 1 and r7 (0x2138) << 15, which should set C flag
+SHR r3, 0x01
+LLI r0, 0x01
+ADD r0, r7
+SHL r7, 0x0F
+SHL r7, 0x01
+
 end:
 	HLT
 

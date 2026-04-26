@@ -22,6 +22,7 @@ CPU::CPU()
 	opcode_table_[0x22] = &CPU::executeBNE;
 	opcode_table_[0x34] = &CPU::executeBANK;
 	opcode_table_[0x37] = &CPU::executeCALL;
+	opcode_table_[0x09] = &CPU::executeDIV;
 	opcode_table_[0x30] = &CPU::executeHLT;
 	opcode_table_[0x33] = &CPU::executeJMP;
 	opcode_table_[0x20] = &CPU::executeJMPI;
@@ -29,18 +30,19 @@ CPU::CPU()
 	opcode_table_[0x11] = &CPU::executeLLI;
 	opcode_table_[0x10] = &CPU::executeLUI;
 	opcode_table_[0x01] = &CPU::executeMOV;
+	opcode_table_[0x08] = &CPU::executeMUL;
 	opcode_table_[0x31] = &CPU::executeNOP;
 	opcode_table_[0x32] = &CPU::executeNOT;
 	opcode_table_[0x03] = &CPU::executeOR;
 	opcode_table_[0x35] = &CPU::executePOP;
 	opcode_table_[0x36] = &CPU::executePUSH;
 	opcode_table_[0x38] = &CPU::executeRET;
+	opcode_table_[0x0A] = &CPU::executeSHL;
+	opcode_table_[0x0B] = &CPU::executeSHR;
 	opcode_table_[0x05] = &CPU::executeSTA;
 	opcode_table_[0x06] = &CPU::executeSUB;
 	opcode_table_[0x07] = &CPU::executeXOR;
 }
-
-
 
 void CPU::loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr)
 {

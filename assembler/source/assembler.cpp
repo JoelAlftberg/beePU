@@ -24,6 +24,7 @@ Assembler::Assembler(const char* output, const char* format)
 	lookupTable_["BNE"] 	= { 0b10, 0b0010};
 	lookupTable_["BANK"] 	= { 0b11, 0b0100};
 	lookupTable_["CALL"] 	= { 0b11, 0b0111};
+	lookupTable_["DIV"] 	= { 0b00, 0b1001};
 	lookupTable_["HLT"] 	= { 0b11, 0b0000};
 	lookupTable_["JMP"] 	= { 0b11, 0b0011};
 	lookupTable_["JMPI"] 	= { 0b10, 0b0000};
@@ -31,12 +32,15 @@ Assembler::Assembler(const char* output, const char* format)
 	lookupTable_["LLI"] 	= { 0b01, 0b0001};
 	lookupTable_["LUI"] 	= { 0b01, 0b0000};
 	lookupTable_["MOV"] 	= { 0b00, 0b0001};
+	lookupTable_["MUL"] 	= { 0b00, 0b1000};
 	lookupTable_["NOP"] 	= { 0b11, 0b0001};
 	lookupTable_["NOT"] 	= { 0b11, 0b0010};
 	lookupTable_["OR"] 		= { 0b00, 0b0011};
 	lookupTable_["POP"] 	= { 0b11, 0b0101};
 	lookupTable_["PUSH"] 	= { 0b11, 0b0110};
 	lookupTable_["RET"] 	= { 0b11, 0b1000};
+	lookupTable_["SHL"] 	= { 0b00, 0b1010};
+	lookupTable_["SHR"] 	= { 0b00, 0b1011};
 	lookupTable_["STA"] 	= { 0b00, 0b0101};
 	lookupTable_["SUB"] 	= { 0b00, 0b0110};
 	lookupTable_["XOR"] 	= { 0b00, 0b0111};
@@ -135,9 +139,20 @@ void Assembler::secondPass()
 					std::cout << "Too few tokens found for a two-registers operation" << "\n";
 					continue;
 				}
-				
+
 				std::uint8_t src =  std::stoul(tokens[1].substr(1));
-				std::uint8_t dst =  std::stoul(tokens[2].substr(1));
+				std::uint8_t dst{0U};
+
+				if ("SHL" == mnemonic or "SHR" == mnemonic) 
+				{
+					dst = std::stoul(tokens[2], nullptr, 0);
+				}
+				else
+				{ 
+					dst = std::stoul(tokens[2].substr(1)); 
+					 
+				}
+
 				binaryRepr |= (src << SRC_SHIFT) | dst;
 				break;
 			}

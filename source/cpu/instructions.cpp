@@ -89,6 +89,25 @@ void CPU::executeCALL(const Instruction& instruction)
 
 }
 
+void CPU::executeDIV(const Instruction& instruction)
+{
+	memory::Register& src = registers_[static_cast<uint8_t>(instruction.reg1)];
+	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg2)];
+	
+	flags_.clear();
+	if (0 == src.read()) {
+		flags_.setFlag(Flag::Overflow); 
+		return; 
+	}
+
+	std::uint32_t result = dst.read() / src.read();
+	if (result & 0x8000) { flags_.setFlag(Flag::Negative); }
+	if (0U == (result & 0xFFFF)) { flags_.setFlag(Flag::Zero); }
+
+	dst.write(static_cast<std::uint16_t>(result));
+
+}
+
 void CPU::executeHLT(const Instruction& instruction)
 {
 	halted_ = true;
@@ -136,6 +155,25 @@ void CPU::executeMOV(const Instruction& instruction)
 	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg2)];
 
 	dst.write(src.read());
+}
+
+void CPU::executeMUL(const Instruction& instruction)
+{
+	memory::Register& src = registers_[static_cast<uint8_t>(instruction.reg1)];
+	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg2)];
+	
+	std::uint32_t result = src.read() * dst.read();
+	flags_.clear();
+	
+	if (result > 0xFFFF) {
+		flags_.setFlag(Flag::Carry);
+		flags_.setFlag(Flag::Overflow); 
+	}
+	if (result & 0x8000) { flags_.setFlag(Flag::Negative); }
+	if (0U == (result & 0xFFFF)) { flags_.setFlag(Flag::Zero); }
+
+	dst.write(static_cast<std::uint16_t>(result));
+
 }
 
 void CPU::executeNOP(const Instruction& instruction){}
@@ -191,6 +229,37 @@ void CPU::executeRET(const Instruction& instruction)
 	std::uint16_t stackPointer = registers_[STACK_POINTER_REGISTER].read();
 	std::uint16_t address = memController_.readStack(stackPointer);
 	pc_.write(address);
+}
+
+void CPU::executeSHL(const Instruction& instruction)
+{
+	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg1)];
+	std::uint8_t shiftAmount = static_cast<uint8_t>(instruction.reg2) & 0x000F;
+
+	flags_.clear();
+	
+	std::uint16_t result = dst.read() << shiftAmount;
+	if (0U == (result & 0xFFFF)) { flags_.setFlag(Flag::Zero); }
+	if (result & 0x8000) { flags_.setFlag(Flag::Negative); }
+	if (dst.read() >> (16U - shiftAmount) & 1) { flags_.setFlag(Flag::Carry); }
+
+	dst.write(result);
+
+}
+
+void CPU::executeSHR(const Instruction& instruction)
+{
+	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg1)];
+	std::uint8_t shiftAmount = static_cast<uint8_t>(instruction.reg2) & 0x000F;
+	
+	flags_.clear();
+
+	std::uint16_t result = dst.read() >> shiftAmount;
+	if ( (dst.read() >> (shiftAmount - 1U)) & 1) { flags_.setFlag(Flag::Carry); }
+	if (0U == (result & 0xFFFF)) { flags_.setFlag(Flag::Zero); }
+
+	dst.write(result);
+
 }
 
 void CPU::executeSTA(const Instruction& instruction)

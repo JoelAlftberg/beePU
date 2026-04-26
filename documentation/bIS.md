@@ -79,6 +79,12 @@ register.
 * `[7:4]` - Target register containing the address to jump to
 * Bits `[3:0]` are ignored in this opcode.
 
+## DIV
+`00 1001 -- xxxx xxxx`  
+The DIV instruction multiplues the value of the destination register by the value stored in the source register and stores the result in the destination register.    
+* `[7:4]` - Source register 
+* `[3:0]` - Destination register (where result is stored)
+
 ## HLT
 `11 0000 -- ---- ----`  
 
@@ -134,6 +140,12 @@ The MOV instruction loads the value from the source to the destination register.
 
 * `[7:4]` - Source register (Register to fetch from)
 * `[3:0]` - Destination register (where data is to be stored)
+
+## MUL
+`00 1000 -- xxxx xxxx`  
+The MUL instruction multiplues the value of the source and destination register and stores the result in the destination register.  
+* `[7:4]` - Source register 
+* `[3:0]` - Destination register (where result is stored)
 
 ## NOP
 `11 0001 -- ---- ----`  
@@ -194,6 +206,21 @@ The SUB instruction subtractes the value of the source register from the value s
 * `[9:8]`  - Unused
 * `[7:4]` - Source register (value to subtract)
 * `[3:0]` - Destination register (containing value to subtract from)
+
+## SHL
+`00 1010 -- xxxx xxxx`  
+
+The SHL instruction shifts the bits of the specified register to the right by the value specified in the four lowest bits.  
+The result of the operation is stores in the  
+* `[7:4]` - Register
+* `[3:0]` - Amount to shift with
+
+## SHR
+`00 1011 -- xxxx xxxx`   
+
+The SHR instruction shifts the bits of the specified register to the right by the value specified in the four lowest bits.    
+* `[7:4]` - Register
+* `[3:0]` - Amount to shift with
 
 ## XOR
 `00 0111 -- xxxx xxxx`  

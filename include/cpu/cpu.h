@@ -88,6 +88,7 @@ private:
 	void executeBNE(const Instruction& instruction);
 	void executeBANK(const Instruction& instruction);
 	void executeCALL(const Instruction& instruction);
+	void executeDIV(const Instruction& instruction);
 	void executeHLT(const Instruction& instruction);
 	void executeJMP(const Instruction& instruction);
 	void executeJMPI(const Instruction& instruction);
@@ -95,12 +96,15 @@ private:
 	void executeLLI(const Instruction& instruction);
 	void executeLUI(const Instruction& instruction);
 	void executeMOV(const Instruction& instruction);
+	void executeMUL(const Instruction& instruction);
 	void executeNOP(const Instruction& instruction);
 	void executeNOT(const Instruction& instruction);
 	void executeOR(const Instruction& instruction);
 	void executePOP(const Instruction& instruction);
 	void executePUSH(const Instruction& instruction);
 	void executeRET(const Instruction& instruction);
+	void executeSHL(const Instruction& instruction);
+	void executeSHR(const Instruction& instruction);
 	void executeSTA(const Instruction& instruction);
 	void executeSUB(const Instruction& instruction);
 	void executeXOR(const Instruction& instruction);

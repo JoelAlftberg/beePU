@@ -17,7 +17,8 @@ A 16-bit emulated CPU implementing a custom instruction set (bIS), with an accom
 ## Coming features
 * More instructions (MUL, DIV, SHL, SHR, ...)
 * BIOS/Bootloader
-* Display and I/O
+* Display
+* I/O and interrupts
 
 ## Building
 
