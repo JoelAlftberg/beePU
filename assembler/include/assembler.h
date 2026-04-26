@@ -26,6 +26,8 @@ public:
 	~Assembler() = default;
 
 private:
+
+	void emitCallLabel(std::vector<std::string> tokens);
 	std::string outputFile_{};
 	std::string outputFormat_{};
 	std::unordered_map<std::string, std::uint16_t> symbols_{};

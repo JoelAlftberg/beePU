@@ -36,6 +36,9 @@ public:
 	std::uint8_t read(std::uint16_t address);
 	std::uint16_t readWord(std::uint16_t address);
 
+	std::uint16_t readStack(std::uint16_t address);
+	void writeStack(std::uint16_t value, std::uint16_t address);
+
 	inline void switchBank(std::uint8_t bankIndex)
 	{
 		if(bankIndex >= NUM_BANKS or STACK_BANK_INDEX == bankIndex)

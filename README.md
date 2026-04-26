@@ -1,24 +1,23 @@
 # beePU
 A 16-bit emulated CPU implementing a custom instruction set (bIS), with an accompanying assembler (basm) for compiling bIS assembly into binary.
 
-Features
+## Features
 * CLI with built-in debugger
 * Custom instruction set with 64 instructions
 * Custom assembler for the instruction set
+* Memory banking
+* Stack 
 
-Specifications
+## Specifications
 * little-endian
 * 16-bit address space
 * 16 registers
-* 64kB RAM
+* 64kB Memory
 
-
-Coming features
-* Memory banking
-* More instructions (MUL, DIV, ...)
-* Stack support
-* Bootloader
-* BIOS
+## Coming features
+* More instructions (MUL, DIV, SHL, SHR, ...)
+* BIOS/Bootloader
+* Display and I/O
 
 ## Building
 
@@ -49,3 +48,4 @@ The user is able control the emulator by the built-in CLI and a set of commands.
 * `help <cmd>` - Show a list of available commands or description of a specific command
 * `exit` - Exit the emulator
 
+## [Documentation](documentation/index.md)
