@@ -4,6 +4,7 @@
 
 #include <bitset>
 #include <filesystem>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -21,7 +22,8 @@ Assembler::Assembler(const char* output, const char* format)
 	lookupTable_["BGT"] 	= { 0b10, 0b0011};
 	lookupTable_["BLT"] 	= { 0b10, 0b0100};
 	lookupTable_["BNE"] 	= { 0b10, 0b0010};
-	lookupTable_["BNK"] 	= { 0b11, 0b0100};
+	lookupTable_["BANK"] 	= { 0b11, 0b0100};
+	lookupTable_["CALL"] 	= { 0b11, 0b0111};
 	lookupTable_["HLT"] 	= { 0b11, 0b0000};
 	lookupTable_["JMP"] 	= { 0b11, 0b0011};
 	lookupTable_["JMPI"] 	= { 0b10, 0b0000};
@@ -32,6 +34,9 @@ Assembler::Assembler(const char* output, const char* format)
 	lookupTable_["NOP"] 	= { 0b11, 0b0001};
 	lookupTable_["NOT"] 	= { 0b11, 0b0010};
 	lookupTable_["OR"] 		= { 0b00, 0b0011};
+	lookupTable_["POP"] 	= { 0b11, 0b0101};
+	lookupTable_["PUSH"] 	= { 0b11, 0b0110};
+	lookupTable_["RET"] 	= { 0b11, 0b1000};
 	lookupTable_["STA"] 	= { 0b00, 0b0101};
 	lookupTable_["SUB"] 	= { 0b00, 0b0110};
 	lookupTable_["XOR"] 	= { 0b00, 0b0111};
@@ -74,8 +79,18 @@ void Assembler::firstPass(std::string& line)
 		return;
 	}
 
-
 	lines_.push_back(line);
+	
+	std::vector<std::string> tokens = utils::split(line);
+
+	if (tokens.size() > 1)
+	{
+		if ("CALL" == tokens[0] and 'R' != std::toupper(tokens[1][0]))
+		{
+			currentAddress_ += (INSTRUCTION_WIDTH * 2);
+		}
+	}
+
 	currentAddress_ += INSTRUCTION_WIDTH;
 }
 
@@ -151,10 +166,10 @@ void Assembler::secondPass()
 
 				if (iter != symbols_.end())
 				{
-					std::cout << "Label: " << iter->first << "\n" << "Address: " << iter->second << "\n";
+					std::cout << "Label: " << iter->first << "\n" << "Address: " << std::format("0x{:04X}", iter->second) << "\n";
 					std::uint16_t labelAddress = iter->second;
 					std::uint16_t offset = labelAddress - (currentAddress_ + INSTRUCTION_WIDTH);
-					std::cout << "Offset: " << (offset & 0x3FF) << "\n";
+					std::cout << "Offset: " << (int16_t)offset << "\n";
 
 					binaryRepr |= (offset & 0x3FF);
 				}
@@ -171,8 +186,16 @@ void Assembler::secondPass()
 			{
 				if (tokenAmount > 1)
 				{
-					std::uint8_t src =  std::stoul(tokens[1].substr(1));
-					binaryRepr |= (src << SRC_SHIFT);
+					if ("CALL" == mnemonic and symbols_.end() != symbols_.find(tokens[1]))
+					{
+						emitCallLabel(tokens);
+						binaryRepr |= (SCRATCH_REGISTER << SRC_SHIFT);
+					}
+					else
+					{
+						std::uint8_t src =  std::stoul(tokens[1].substr(1));
+						binaryRepr |= (src << SRC_SHIFT);
+					} 
 				}
 				break;
 			}
@@ -182,6 +205,35 @@ void Assembler::secondPass()
 		outputBuf_.push_back(binaryRepr);
 
 	}
+}
+
+void Assembler::emitCallLabel(std::vector<std::string> tokens)
+{
+	std::uint16_t labelAddress = symbols_[tokens[1]];
+	std::cout << "Label: " << tokens[1] << "\n" << "Address: " << std::format("0x{:04X}", (int)labelAddress) << "\n";
+	std::uint16_t instructionId{0U};
+	std::uint8_t format{0U};
+	std::uint8_t opcode{0U};
+
+	std::uint8_t lowerAddrByte = (labelAddress & LOWER_BYTE_MASK);
+	format = lookupTable_["LLI"].format;
+	opcode = lookupTable_["LLI"].opcode;
+	instructionId = (format << 4) | opcode;
+	std::uint16_t loadLowerAddr = (instructionId << OPCODE_SHIFT) | lowerAddrByte;
+	loadLowerAddr |= (SCRATCH_REGISTER << BYTE_WIDTH);
+	outputBuf_.push_back(loadLowerAddr);
+
+	currentAddress_ += INSTRUCTION_WIDTH;
+
+	std::uint8_t upperAddrByte = (labelAddress >> BYTE_WIDTH);
+	format = lookupTable_["LUI"].format;
+	opcode = lookupTable_["LUI"].opcode;
+	instructionId = (format << 4) | opcode;
+	std::uint16_t loadUpperAddr = (instructionId << OPCODE_SHIFT) | upperAddrByte;
+	loadUpperAddr |= (SCRATCH_REGISTER << BYTE_WIDTH);
+	outputBuf_.push_back(loadUpperAddr);
+
+	currentAddress_ += INSTRUCTION_WIDTH;
 }
 
 void Assembler::writeOutput()

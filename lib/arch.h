@@ -9,6 +9,9 @@ static constexpr std::uint16_t LOWER_BYTE_MASK{0x00FF};
 /* Registers */
 static constexpr std::uint8_t REG_WIDTH_BITS{16U};
 static constexpr std::uint8_t REG_AMOUNT{16U};
+static constexpr std::uint8_t BANK_REGISTER{10U};
+static constexpr std::uint8_t SCRATCH_REGISTER{0U};
+static constexpr std::uint8_t STACK_POINTER_REGISTER{15U};
 
 /* Instruction */
 static constexpr std::uint8_t INSTRUCTION_WIDTH{2U};
@@ -25,7 +28,6 @@ static constexpr std::uint8_t SINGLE_REG_OP{0b11};
 
 /* Memory banks */
 static constexpr std::uint8_t NUM_BANKS{16U};
-static constexpr std::uint8_t BANK_REGISTER{10U};
 static constexpr std::uint8_t DEFAULT_BANK{0U};
 static constexpr std::uint8_t STACK_BANK_INDEX{1U};
 

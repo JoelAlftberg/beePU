@@ -66,6 +66,7 @@ MemoryTarget MemoryController::resolveAddress(std::uint16_t address)
 		{
 			target.memoryUnit = &rom_;
 			target.offset = address - ROM_REGION_START;
+			break;
 		}
 		case Region::Invalid:
 		{
@@ -79,7 +80,7 @@ void MemoryController::write(std::uint8_t value, std::uint16_t address)
 {
 	MemoryTarget target{resolveAddress(address)};
 
-	if (nullptr != target.memoryUnit or &rom_ != target.memoryUnit)
+	if (nullptr != target.memoryUnit and &rom_ != target.memoryUnit)
 	{
 		target.memoryUnit->write(value, target.offset);
 	}
@@ -117,6 +118,23 @@ std::uint16_t MemoryController::readWord(std::uint16_t address)
 	}
 
 	return 0U;
+}
+
+std::uint16_t MemoryController::readStack(std::uint16_t address)
+{
+	if (address <= BANK_MEM_SIZE - 1)
+	{
+		return banks_[STACK_BANK_INDEX].readWord(address);
+	}
+	return 0U;
+}
+
+void MemoryController::writeStack(std::uint16_t value, std::uint16_t address)
+{
+	if (address <= BANK_MEM_SIZE - 1)
+	{
+		banks_[STACK_BANK_INDEX].writeWord(value, address);
+	}	
 }
 
 } // namespace memory

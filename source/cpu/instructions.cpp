@@ -70,10 +70,23 @@ void CPU::executeBNE(const Instruction& instruction)
 	}
 }
 
-void CPU::executeBNK(const Instruction& instruction)
+void CPU::executeBANK(const Instruction& instruction)
 {
 	std::uint8_t bankIndex = registers_[BANK_REGISTER].read();
 	memController_.switchBank(bankIndex);
+}
+
+void CPU::executeCALL(const Instruction& instruction)
+{
+	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg1)];
+	std::uint16_t dstAddress = dst.read();
+	
+	std::uint16_t stackPointer = registers_[STACK_POINTER_REGISTER].read();
+	memController_.writeStack(pc_.read(), stackPointer);
+
+	pc_.write(dstAddress);
+	decStackPointer();
+
 }
 
 void CPU::executeHLT(const Instruction& instruction)
@@ -148,6 +161,36 @@ void CPU::executeOR(const Instruction& instruction)
 	if (0U == (result & 0xFFFF)) { flags_.setFlag(Flag::Zero); }
 	
 	dst.write(result);
+}
+
+void CPU::executePOP(const Instruction& instruction)
+{
+	incStackPointer();
+	memory::Register& dst = registers_[static_cast<uint8_t>(instruction.reg1)];
+
+	std::uint16_t stackPointer = registers_[STACK_POINTER_REGISTER].read();
+	std::uint16_t value = memController_.readStack(stackPointer);
+	dst.write(value);
+}
+
+void CPU::executePUSH(const Instruction& instruction)
+{
+	memory::Register& src = registers_[static_cast<uint8_t>(instruction.reg1)];
+
+	std::uint16_t stackPointer = registers_[STACK_POINTER_REGISTER].read();
+	std::uint16_t value = src.read();
+
+	memController_.writeStack(value, stackPointer);
+	decStackPointer();
+	
+}
+
+void CPU::executeRET(const Instruction& instruction)
+{
+	incStackPointer();
+	std::uint16_t stackPointer = registers_[STACK_POINTER_REGISTER].read();
+	std::uint16_t address = memController_.readStack(stackPointer);
+	pc_.write(address);
 }
 
 void CPU::executeSTA(const Instruction& instruction)
