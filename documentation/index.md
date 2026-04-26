@@ -9,3 +9,4 @@
 [Instruction set](bIS.md)  
 [Interrupt vectors](interrupt_vectors.md)  
 [Memory map](memory_map.md)
+[Registers](registers.md)

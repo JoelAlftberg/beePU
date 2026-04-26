@@ -43,7 +43,7 @@ public:
 	void incStackPointer()
 	{
 		std::uint16_t stackPointer = registers_[STACK_POINTER_REGISTER].read();
-		if (stackPointer <= BANK_MEM_SIZE - 1)
+		if (stackPointer <= BANK_MEM_SIZE - 2)
 		{
 			registers_[STACK_POINTER_REGISTER].write(stackPointer + 2);
 		}

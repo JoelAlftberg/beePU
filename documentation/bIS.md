@@ -69,6 +69,16 @@ The offset has the range -512 to +511 bytes.
 
 Switches memory bank to the bank specified in the Register `R10` (Bank Register).  
 
+ ## CALL
+`11 0111 -- xxxx ----`
+
+The CALL instruction pushes the return address onto the stack and jumps to the address stored in the target
+register.  
+When using a label as the operand, the assembler expands this into three instructions using R0 as a scratch
+register.  
+* `[7:4]` - Target register containing the address to jump to
+* Bits `[3:0]` are ignored in this opcode.
+
 ## HLT
 `11 0000 -- ---- ----`  
 
@@ -143,10 +153,32 @@ The NOT instruction performs a logical NOT operation on the register specified, 
 
 The OR instruction does a logical OR operation on the source and destination registers.  
 The result of the operation is stored in the destination register.  
-Sets the Z Flag in the flag register if the result is zero and the Sign flag if the MSB is 1.
-
+Sets the Z Flag in the flag register if the result is zero and the Sign flag if the MSB is 1.  
 * `[7:4]` - Source register
 * `[3:0]` - Destination register (where result is to be stored)
+
+## POP
+`11 0101 -- xxxx ----`
+
+The POP instruction increments the stack pointer and reads the value at the top of the stack into the destination
+register.  
+The stack lives in bank `1` and the stack pointer is stored in `R15`.  
+* `[7:4]` - Destination register
+* Bits `[3:0]` are ignored in this opcode.
+
+## PUSH
+`11 0110 -- xxxx ----`  
+
+The PUSH instruction writes the value of the source register to the top of the stack and decrements the stack pointer.  
+The stack lives in bank `1` and the stack pointer is stored in `R15`.  
+* `[7:4]` - Source register
+* Bits `[3:0]` are ignored in this opcode.
+
+## RET
+`11 1000 -- ---- ----`  
+
+The RET instructions increments the stack pointer and sets the PC to the return address stored at the top of the stack.  
+* Bits `[7:0]` are ignored in this opcode.
 
 ## STA
 `00 0101 -- xxxx xxxx`
