@@ -27,6 +27,8 @@ class CLI
 
 public:
 	Input readInput();
+	Input readInput(const std::string& input);
+	
 	Output evaluateInput(const Input& input);
 	void printOutput(const Output& output);
 

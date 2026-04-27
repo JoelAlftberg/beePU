@@ -15,7 +15,6 @@ A 16-bit emulated CPU implementing a custom instruction set (bIS), with an accom
 * 64kB Memory
 
 ## Coming features
-* More instructions (MUL, DIV, SHL, SHR, ...)
 * BIOS/Bootloader
 * Display
 * I/O and interrupts

@@ -49,6 +49,19 @@ Input CLI::readInput()
 	return Input{command, args};
 }
 
+Input CLI::readInput(const std::string& input)
+{
+
+	std::vector<std::string> tokens{utils::split(input)};
+	
+	if (tokens.empty()) { return Input{};}
+
+	std::string command{tokens[0]};
+	std::vector<std::string> args(tokens.begin() + 1, tokens.end());
+
+	return Input{command, args};
+}
+
 Output CLI::evaluateInput(const Input& input)
 {
 	auto command = commandTable_.find(input.command);
