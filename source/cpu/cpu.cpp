@@ -9,7 +9,8 @@
 namespace cpu
 {
 
-CPU::CPU()
+CPU::CPU(std::vector<std::uint16_t>& programBin)
+	: programBinary_{programBin}
 {
 	
 	registers_[STACK_POINTER_REGISTER].write(BANK_MEM_SIZE - 1);
@@ -73,6 +74,8 @@ void CPU::reset()
 	clearRegisters();
 	pc_.reset();
 	flags_.clear();
+	memController_.reset();
+	loadProgram(programBinary_, 0U);
 	memController_.switchBank(DEFAULT_BANK);
 	registers_[STACK_POINTER_REGISTER].write(BANK_MEM_SIZE - 1);
 	halted_ = false;

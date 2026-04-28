@@ -47,9 +47,15 @@ public:
 
 		return word;
 	}
+	
+	void clear()
+	{
+		std::size_t memorySize{data_.size()};
+		data_.assign(memorySize, 0);
+	};
 
 private:
-	std::vector<uint8_t> data_{};
+	std::vector<uint8_t> data_{0U};
 
 };
 

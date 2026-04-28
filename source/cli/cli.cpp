@@ -145,7 +145,7 @@ Output CLI::handleStep(const std::vector<std::string>& arguments)
 		
 	}
 
-	output.lines.push_back(std::format("Stepped (0x{:04x}) -> (0x{:04x})", startAddress ,cpu_.getProgramCounter()));
+	output.lines.push_back(std::format("Stepped (0x{:04X}) -> (0x{:04X})", startAddress ,cpu_.getProgramCounter()));
 
 	return output;
 }
@@ -159,7 +159,7 @@ Output CLI::handleBreak(const std::vector<std::string>& arguments)
 		output.lines.push_back("Breakpoints:");
 		for (uint16_t address : breakpoints_)
 		{
-			output.lines.push_back(std::format("(0x{:04x})", address));
+			output.lines.push_back(std::format("(0x{:04X})", address));
 		}	
 	}
 	else
@@ -257,7 +257,11 @@ Output CLI::handleGet(const std::vector<std::string>& arguments)
 			try
 			{
 				std::uint16_t address = std::stoul(arguments[1], nullptr, 0);
-				output.lines.push_back(std::format("(0x{:04X}):	{:02X}", address ,cpu_.readMemory(address)));
+				for(int i{address}; i < (address + 18); ++i)
+				{
+					output.lines.push_back(std::format("(0x{:04X}):	{:02X}", i ,cpu_.readMemory(i)));
+				}
+
 			}
 			catch(const std::exception& e)
 			{
@@ -288,8 +292,6 @@ Output CLI::handleGet(const std::vector<std::string>& arguments)
 	return output;
 }
 
-// TODO in cli-set branch
-// Depends on adding writeMemory(address, data) and setRegisterValue(regsiter, value)
 Output CLI::handleSet(const std::vector<std::string>& arguments)
 {
 	Output output{};
@@ -325,8 +327,8 @@ Output CLI::handleStatus(const std::vector<std::string>& arguments)
 	std::uint8_t flagC = (status.flags & 0x04) != 0U ? 1U : 0U;
 	std::uint8_t flagV = (status.flags & 0x08) != 0U ? 1U : 0U;
 
-	output.lines.push_back(std::format("Flags: N={} Z={} C={} V={}", flagN, flagZ, flagC, flagV));
-	output.lines.push_back(std::format("PC @ (0x{:04X})", status.pc));
+	output.lines.push_back(std::format("N={} Z={} C={} V={}", flagN, flagZ, flagC, flagV));
+	output.lines.push_back(std::format("PC: 0x{:04X}", status.pc));
 	for(std::size_t i{0U}; i < status.registers.size(); ++i)
 	{
 		output.lines.push_back(std::format("R{}: 0x{:04X}", i, status.registers[i]));

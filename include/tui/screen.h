@@ -1,8 +1,11 @@
 #pragma once
 
+#include "tui/activepane.h"
 #include "arch.h"
 #include "cpu/cpu.h"
 #include "tui/debugger.h"
+#include "tui/register.h"
+#include "tui/memory.h"
 
 //#include "ncurses/ncurses.h"
 #include <ncurses.h>
@@ -13,11 +16,7 @@
 namespace tui
 {
 
-enum class ActivePane
-{
-	Debugger,
-	Display,
-};
+
 
 class Screen
 {
@@ -31,7 +30,8 @@ public:
 		, memoryWindow_{newwin(MEMORY_PANE_LINES, RIGHT_PANE_COLS, STATUS_PANE_LINES, DISPLAY_PANE_COLS)}
 		, debuggerWindow_{newwin(TOTAL_HEIGHT - DISPLAY_PANE_LINES , DISPLAY_PANE_COLS,  DISPLAY_PANE_LINES, 0)}
 		, debugger_{debuggerWindow_, cpu}
-
+		, registerPane_{statusWindow_, cpu}
+		, memoryPane_{memoryWindow_, cpu}
 	{
 		getmaxyx(screen_, lines_, cols_);
 		if(lines_ < TOTAL_HEIGHT or cols_ < TOTAL_WIDTH)
@@ -40,7 +40,6 @@ public:
 			std::cout << "Terminal too small" << "\n";
 			std::exit(1);
 		}
-
 		setup();
 	}
 
@@ -58,28 +57,20 @@ public:
 		mvwprintw(memoryWindow_, 0, 2, "Memory:");
 
 		box(debuggerWindow_, 0, 0);
+		mvwprintw(debuggerWindow_, 0, 2, "Debug");
 
 		keypad(debuggerWindow_, TRUE);
-		curs_set(1);
+		curs_set(2);
 		mvwprintw(debuggerWindow_, 1, 1, "> ");
 		nodelay(debuggerWindow_, TRUE);
 	}
 
 	void tick()
 	{
-		switch(activePane_)
-		{
-			case ActivePane::Debugger:
-			{
-				debugger_.tick();
-				break;
-			}
-			case ActivePane::Display:
-			{
-				// TODO: display read
-				break;
-			}
-		}
+		Debugger::Output debugOutput{debugger_.tick(activePane_)};
+		registerPane_.tick();
+		memoryPane_.tick(debugOutput);
+		
 	}
 
 	~Screen()
@@ -90,10 +81,10 @@ public:
 	void update()
 	{
 		wnoutrefresh(displayWindow_);
-		wnoutrefresh(statusWindow_);
 		wnoutrefresh(memoryWindow_);
+		wnoutrefresh(statusWindow_);
 		wnoutrefresh(debuggerWindow_);
-
+		
 		doupdate();
 	}
 
@@ -105,6 +96,8 @@ private:
 	WINDOW* memoryWindow_;
 	WINDOW* debuggerWindow_;
 	Debugger debugger_;
+	RegisterPane registerPane_;
+	MemoryPane memoryPane_;
 	ActivePane activePane_{ActivePane::Debugger};
 
 };

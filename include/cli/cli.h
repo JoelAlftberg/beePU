@@ -1,11 +1,13 @@
 #pragma once
 
+#include "cpu/cpu.h"
+#include "utils.h"
+
 #include <string>
 #include <unordered_set>
 #include <vector>
 
-#include "cpu/cpu.h"
-#include "utils.h"
+
 
 namespace cli
 {

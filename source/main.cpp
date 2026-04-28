@@ -12,8 +12,6 @@
 
 int main(int argc, char* argv[])
 {
-	
-	cpu::CPU cpu{};
 
 	const char* inputBinary = argv[1];
 
@@ -39,23 +37,26 @@ int main(int argc, char* argv[])
 		programBinary.push_back(word);
 	}
 
+	cpu::CPU cpu{programBinary};
 	cpu.loadProgram(programBinary, 0);
 	
 	tui::Screen screen{cpu};
-	screen.update();
 
-		/**
-	 * 	while(!cli.shouldExit())
+
+	/*
+	while(!cli.shouldExit())
 	{
 		cli::Input input{cli.readInput()};
 		cli::Output output{cli.evaluateInput(input)};
 		cli.printOutput(output);
 	}
-	 */
+	*/
 
 	while(1)
 	{
-		screen.readInput();
+		screen.update();
+		screen.tick();
+
 	}
 
 

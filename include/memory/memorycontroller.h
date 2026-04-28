@@ -39,6 +39,18 @@ public:
 	std::uint16_t readStack(std::uint16_t address);
 	void writeStack(std::uint16_t value, std::uint16_t address);
 
+	void reset()
+	{
+		fixedRAM_.clear();
+		for (memory::Memory& bank : banks_)
+		{
+			bank.clear();
+		}
+		display_.clear();
+		io_.clear();
+		rom_.clear();
+	}
+
 	inline void switchBank(std::uint8_t bankIndex)
 	{
 		if(bankIndex >= NUM_BANKS or STACK_BANK_INDEX == bankIndex)
