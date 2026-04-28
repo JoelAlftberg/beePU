@@ -7,11 +7,11 @@
 #include "cpu/cpu.h"
 #include "memory/memory.h"
 
+#include "tui/screen.h"
+#include "tui/debugger.h"
+
 int main(int argc, char* argv[])
 {
-	
-	cpu::CPU cpu{};
-	cli::CLI cli{cpu};
 
 	const char* inputBinary = argv[1];
 
@@ -37,14 +37,28 @@ int main(int argc, char* argv[])
 		programBinary.push_back(word);
 	}
 
+	cpu::CPU cpu{programBinary};
 	cpu.loadProgram(programBinary, 0);
+	
+	tui::Screen screen{cpu};
 
+
+	/*
 	while(!cli.shouldExit())
 	{
 		cli::Input input{cli.readInput()};
 		cli::Output output{cli.evaluateInput(input)};
 		cli.printOutput(output);
 	}
+	*/
+
+	while(1)
+	{
+		screen.update();
+		screen.tick();
+
+	}
+
 
 	return 0;
 

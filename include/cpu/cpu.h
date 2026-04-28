@@ -30,6 +30,8 @@ class CPU
 
 public:
 
+	CPU(std::vector<std::uint16_t>& programBin);
+	
 	void loadProgram(const std::vector<uint16_t>& program, uint16_t start_addr = 0);
 	
 	Status getStatus();
@@ -76,6 +78,8 @@ private:
 	cpu::ProgramCounter pc_;
 	cpu::Flags flags_;
 	bool halted_ = false;
+
+	std::vector<uint16_t> programBinary_;
 
 	using Handler = void (CPU::*)(const Instruction&);
 	std::array<Handler, 64U> opcode_table_{};

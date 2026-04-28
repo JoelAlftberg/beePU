@@ -6,6 +6,20 @@
 static constexpr std::uint8_t BYTE_WIDTH{8U};
 static constexpr std::uint16_t LOWER_BYTE_MASK{0x00FF};
 
+/* Display */
+static constexpr std::uint16_t DISPLAY_PANE_COLS{80U};
+static constexpr std::uint16_t DISPLAY_PANE_LINES{25U};
+
+static constexpr std::uint16_t RIGHT_PANE_COLS{23U};
+
+static constexpr std::uint16_t STATUS_PANE_LINES{21U};
+static constexpr std::uint16_t MEMORY_PANE_LINES{21U};
+
+static constexpr std::uint16_t TOTAL_HEIGHT{STATUS_PANE_LINES + MEMORY_PANE_LINES};
+static constexpr std::uint16_t TOTAL_WIDTH{DISPLAY_PANE_COLS + RIGHT_PANE_COLS};
+
+static constexpr std::uint16_t RIGHT_PANE_LINES{TOTAL_HEIGHT};
+
 /* Registers */
 static constexpr std::uint8_t REG_WIDTH_BITS{16U};
 static constexpr std::uint8_t REG_AMOUNT{16U};
