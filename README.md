@@ -1,8 +1,10 @@
 # beePU
 A 16-bit emulated CPU implementing a custom instruction set (bIS), with an accompanying assembler (basm) for compiling bIS assembly into binary.
 
+![demo](demo.gif)
+
 ## Features
-* CLI with built-in debugger
+* TUI with built-in debugger
 * Custom instruction set with 64 instructions
 * Custom assembler for the instruction set
 * Memory banking
@@ -35,8 +37,8 @@ To get the emulator to run a binary, just specify the file after the executable
 ./beePU <program.bin>
 ```
 
-## CLI
-The user is able control the emulator by the built-in CLI and a set of commands.
+## TUI
+The user is able control the emulator by the built-in debugging CLI and a set of commands.
 
 ### Commands:
 * `run` - Run the emulator

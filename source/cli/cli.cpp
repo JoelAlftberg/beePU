@@ -257,7 +257,7 @@ Output CLI::handleGet(const std::vector<std::string>& arguments)
 			try
 			{
 				std::uint16_t address = std::stoul(arguments[1], nullptr, 0);
-				for(int i{address}; i < (address + 18); ++i)
+				for(std::uint16_t i{address}; i < (address + MEMORY_PANE_LINES - 2U); ++i)
 				{
 					output.lines.push_back(std::format("(0x{:04X}):	{:02X}", i ,cpu_.readMemory(i)));
 				}
